@@ -5,15 +5,15 @@ EchoProxy is a modern API debugging proxy that offers powerful mapping and mocki
 <img src="screenshots/2.png" style="border-radius:6px; margin-top: 0.5rem;" alt="EchoProxy: Map Mock" />
 
 ## Features
-* 🚀 Powered by Golang for the high-performance network application.
+* 🚀 Powered by **Golang** for the high-performance network application.
 * ✅ Hassle-free Intercept HTTP/HTTPS requests/response from Web Browsers, iOS, and Android devices.
 * ✅ Mapping and Mocking support with EchoScript, easy to learn and use.
 * ✅ Modern and intuitive UI.
 * ✅ MacOS 11+, Windows 10+
 
-## Map Mock: EchoScript examples
+## Map Mock examples
 
-Change Request **URL** and **Method**. It can be used to map APIs from PROD to DEV.
+Change Request **URL** and **Method**. It can be used for mapping APIs from PROD to DEV.
 ```go
 pre_request := func() {
   return {
@@ -23,7 +23,7 @@ pre_request := func() {
 }
 ```
 
-Change Request **Header**. It can be used to debug other developer's API.
+Change Request **Header**. It can be used for debugging other developer's API.
 ```go
 pre_request := func() {
   return {
@@ -35,7 +35,7 @@ pre_request := func() {
 }
 ```
 
-Change Response **Body**. It can be used to mock APIs for debugging and testing.
+Change Response **Body**. It can be used for mocking APIs for debugging and testing.
 ```go
 pre_response := func() {
   return {
@@ -47,6 +47,8 @@ pre_response := func() {
   }
 }
 ```
+
+The script changes request and response is named **EchoScript**. It is easy to learn and use.
 
 ## Download
 Comming soon.

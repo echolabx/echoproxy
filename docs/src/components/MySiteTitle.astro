@@ -1,0 +1,9 @@
+---
+import type { Props } from '@astrojs/starlight/props';
+import Default from '@astrojs/starlight/components/SiteTitle.astro';
+
+let params = {...Astro.props}
+params.siteTitleHref = "https://www.echolabx.com"
+---
+
+<Default {...params}><slot /></Default>
