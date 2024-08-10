@@ -15,7 +15,7 @@ EchoProxy is a modern API debugging proxy that offers powerful mapping and mocki
 
 Change Request **URL** and **Method**. It can be used for mapping APIs from PROD to DEV.
 ```go
-pre_request := func() {
+on_request := func(env, req) {
   return {
     url: "http://127.0.0.1:8080/json",
     method: "GET"
@@ -23,13 +23,17 @@ pre_request := func() {
 }
 ```
 
-Change Request **Header**. It can be used for debugging other developer's API.
+Change Request **Header** and **Query**. It can be used for debugging other developer's API.
 ```go
-pre_request := func() {
+on_request := func(env, req) {
   return {
     header: {
       "Referer": "https://www.google.com/",
       "Accept-Encoding": "gzip"
+    },
+    query: {
+      "name": "EchoProxy",
+      "date": "2024-08-08"
     }
   }
 }
@@ -37,12 +41,12 @@ pre_request := func() {
 
 Change Response **Body**. It can be used for mocking APIs for debugging and testing.
 ```go
-pre_response := func() {
+on_response := func(env, res) {
   return {
     body: {
-      app: "EchoProxy",
-      comments: "Easy to use",
-      date: "2024-06-30" 
+      "app": "EchoProxy",
+      "comments": "Modern API debugging Proxy with powerful Map Mock",
+      "date": "2024-06-30" 
     }
   }
 }
@@ -51,4 +55,4 @@ pre_response := func() {
 The script changes request and response is named **EchoScript**. It is easy to learn and use.
 
 ## Download
-Comming soon.
+* [All Releases](https://github.com/echolabx/echoproxy/releases)
