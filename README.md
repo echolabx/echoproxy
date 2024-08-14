@@ -63,6 +63,9 @@ The script changes request and response is named **EchoScript**. It is easy to l
 * Download the latest [Windows app](https://github.com/echolabx/echoproxy/releases/download/v0.9.1/EchoProxy-0.9.1-windows-amd64.zip)
 * [All Releases](https://github.com/echolabx/echoproxy/releases)
 
+## Documentation
+Please visit the [website](https://docs.echolabx.com/start/) for detail docs.
+
 ## Have a problem?
 * Open a GitHub ticket
 * echoproxy@echolabx.com

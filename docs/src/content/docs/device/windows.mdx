@@ -1,14 +1,72 @@
 ---
-title: macOS
-description: How to install Certificate and debug HTTPS contents in macOS device.
+title: Windows
+description: How to install Certificate and debug HTTPS contents on Windows.
 ---
 
-How to install Certificate and debug HTTPS contents in macOS device.
+import { Image } from 'astro:assets';
+import MaterialSymbolsSecurity from '~icons/material-symbols/security';
+import UilLock from '~icons/uil/lock';
+import { inlineIcon } from "./src/styles/styles.ts"
+import autoInstallImage from "./src/assets/windows-install-auto.png"
+import manualInstallImage from "./src/assets/windows-install-manual.png"
+import caInstallImage1 from "./src/assets/ca-windows-1.png"
+import caInstallImage2 from "./src/assets/ca-windows-2.png"
+import unlockHttpsImage1 from "./src/assets/unlock-https-1.png"
+import unlockHttpsImage2 from "./src/assets/unlock-https-2.png"
 
-## Install Certificates on macOS
+How to install Certificate and debug HTTPS requests/responses on Windows.
 
-In order to capture encrypted HTTPS messages (request/response), 
-you have to install EchoProxy CA Certificate on your current machine.
-This step is mandatory for iOS, Android devices, iOS simulators, Java VMs, and Firefox too.
+## Install Certificate on Windows
 
-You can install the Proxyman CA Certificate by navigating to
+In order to capture encrypted HTTPS requests/responses, 
+you have to install **EchoProxy Certificate** on your current device.
+
+You can install the EchoProxy Certificate by following the instruction
+> Click **top toolbar** button <MaterialSymbolsSecurity style={inlineIcon} />
+> → Install Certificate on this Windows
+
+:::note
+The EchoProxy Certificate is a self-signed certificate, which is generated in your machine. 
+EchoProxy never stores or transmits any personal data to EchoProxy's server or 3rd-party.
+:::
+
+:::tip
+EchoProxy Certificate is stored locally at  
+~/Library/Application Support/com.echolabx/echoproxy
+:::
+
+### 1. Automatic mode
+EchoProxy could automatically install & trust the Certificate by following the instruction.
+It's convenient for the majority of users and we can start debugging now.
+
+<Image src={autoInstallImage} alt="Automatic Install Certificate" style="border-radius:6px;" />
+
+### 2. Manual Mode
+If automatically install failed, you can try manually install & trust EchoProxy Certificate by following the instruction. 
+
+<Image src={manualInstallImage} alt="Manual Install Certificate" style="border-radius:6px;" />
+<Image src={caInstallImage1} alt="Manual Install Step 1" style="border-radius:3px;" />
+<Image src={caInstallImage2} alt="Manual Install Step 2" style="border-radius:3px;" />
+
+## Unlock HTTPS
+EchoProxy uses tunnel mode for HTTPS connections by default.
+You need to **Unlock HTTPS** by domain or app name to see raw request/response.
+
+> **Prerequisite**: EchoProxy Certificate installed & trusted successfully
+
+### 1. Quick Unlock HTTPS
+You can unlock HTTPS by click button <UilLock style={inlineIcon} /> in Header/Gerneral.  
+And then resend the HTTPS request, you'll see raw request/response for the domain.
+
+<Image src={unlockHttpsImage1} alt="Unlock HTTPS" />
+
+### 2. HTTPS Settings dialog
+You can manage all unlocked domains and apps in HTTPS Settings dialog.
+> Click **toolbar** button <UilLock style={inlineIcon} /> to open HTTPS Settings dialog.
+
+:::note
+Match type **Equals**: the request domain/app must be the same with the value.  
+Match type **Contains**: the request domain/app contains the value as substring.
+:::
+
+<Image src={unlockHttpsImage2} alt="Unlock HTTPS List" style="border-radius:6px;" />

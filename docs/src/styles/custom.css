@@ -1,3 +1,7 @@
 :root {
   --sl-nav-gap: 0.5rem;
 }
+
+.my-image {
+  display: inline-flex;
+}

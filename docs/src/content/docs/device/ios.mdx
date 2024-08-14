@@ -1,14 +1,29 @@
 ---
-title: macOS
-description: How to install Certificate and debug HTTPS contents in macOS device.
+title: iOS
+description: How to install Certificate and debug HTTPS contents on iOS device.
 ---
 
-How to install Certificate and debug HTTPS contents in macOS device.
+import { Image } from 'astro:assets';
+import MaterialSymbolsSecurity from '~icons/material-symbols/security';
+import { inlineIcon } from "./src/styles/styles.ts"
+import caInstallImage from "./src/assets/ios-install.png"
 
-## Install Certificates on macOS
+How to install Certificate and debug HTTPS requests/responses on iOS device.
 
-In order to capture encrypted HTTPS messages (request/response), 
-you have to install EchoProxy CA Certificate on your current machine.
-This step is mandatory for iOS, Android devices, iOS simulators, Java VMs, and Firefox too.
+## Install Certificate on iOS
 
-You can install the Proxyman CA Certificate by navigating to
+In order to capture encrypted HTTPS requests/responses, 
+you have to install **EchoProxy Certificate** on your iOS device.
+
+You can install the EchoProxy Certificate by following the instruction
+> Click **toolbar** button <MaterialSymbolsSecurity style={inlineIcon} />
+> → Install Certificate on iOS
+
+:::note
+The EchoProxy Certificate is a self-signed certificate, which is generated in your machine. 
+EchoProxy never stores or transmits any personal data to EchoProxy's server or 3rd-party.
+:::
+
+Please following the instruction in the following screenshot.
+
+<Image src={caInstallImage} alt="Install Certificate" style="border-radius:6px;" />

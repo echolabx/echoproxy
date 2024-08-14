@@ -1,37 +1,58 @@
 ---
-title: Getting Started
-description: Getting Started to EchoProxy
+title: Map Mock
+description: Learning Map Mock to modify HTTP(s) request/reponse
 ---
 
 import { Image } from 'astro:assets';
-import proxyImage from './src/assets/1.png';
+import MaterialSymbolsMapOutline from '~icons/material-symbols/map-outline';
+import { inlineIcon } from "./src/styles/styles.ts"
+import mapImage from './src/assets/2.png';
+import mapRuleImage from './src/assets/map-rule.png';
 
-**EchoProxy** is a modern API debugging proxy that offers powerful mapping and mocking capabilities. 
-It helps developers to capture, debug, and modify HTTP(s) request/response flowing between clients and servers.
+**Map Mock** is the first-class feature of EchoProxy. It is designed with love, very easy to learn and use.
+It helps you to map & mock HTTP(s) request/response elegantly.
 
-<Image src={proxyImage} style="border-radius:6px;" alt="EchoProxy: Watch Proxy" />
+> Entrance: Click **left sidebar** button <MaterialSymbolsMapOutline style={inlineIcon} />  
 
-## Features
-* 🚀 Powered by **Golang** for high-performance network application.
-* 🪶 Lightweight, with **low** resource consumption, the installation file size is only **8MB**. 
-* ⭐️ Hassle-free capture HTTP(s) requests/response from Web Browsers, iOS, and Android devices.
-* 🚀 Map Mock is the first-class feature, easy to learn and use, helps you map/mock REST API request/response elegantly.
-* 😀 Write EchoScript extensions in **any** programming language, such as JavaScript, Python, Java, Go, etc.
-* ✅ Fully supports HTTP2.
-* ✅ Modern and intuitive UI.
-* ✅ MacOS 11+, Windows 10+
+:::note
+Please make sure **Enable Map Mock** is checked ✅
+:::
 
-## Download 
-* Download the latest [macOS app (Apple Silicon)](https://github.com/echolabx/echoproxy/releases/download/v0.9.1/EchoProxy-0.9.1-mac-arm64.dmg)
-* Download the latest [macOS app (Intel Chip)](https://github.com/echolabx/echoproxy/releases/download/v0.9.1/EchoProxy-0.9.1-mac-amd64.dmg)
-* Download the latest [Windows app](https://github.com/echolabx/echoproxy/releases/download/v0.9.1/EchoProxy-0.9.1-windows-amd64.zip)
-* [All Releases](https://github.com/echolabx/echoproxy/releases)
+<Image src={mapImage} style="border-radius:6px;" alt="Map Mock" />
 
-## GitHub
+## Map Rule
+The first step is to click the **Add** button creating a new **Map Rule**. There are two types of Map Rule.
+> **Map Locale**: Map the HTTP(s) request to a local file, where the reponse Header & Body will be parsed from.  
+> **Map Remote**: Map the HTTP(s) request to a new URL, where the reponse Header & Body will be fetched from.
 
-[EchoProxy's Repo GitHub](https://github.com/echolabx/echoproxy) is where you can create tickets for feature requests, 
-and discussions, or report bugs and catch up with EchoProxy team quickly and efficiently.
+<Image src={mapRuleImage} style="border-radius:6px; max-width: 35rem;" alt="Map Rule" />
 
-> We're welcome all bug reports and feature request 😍
+### 1. Map Locale
+Let's take an example to learn Map Local. The example URL is https://demo.echolabx.com/.
+It's default response is:  
+> **Content-Type**: text/plain; charset=utf-8  
+> **Content Body**: Hi: EchoProxy
 
-If you'd notify all EchoProxy releases. Please Watch the repo.
+Create a Map Rule with following settings:
+> MapLocale, GET, Equals, Enabled ✅  
+> URL: https://demo.echolabx.com/
+
+Set the content of **Response(Header+Body)** as following:
+```json
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=UTF-8
+
+{ "msg": "success" }
+```
+
+Visit the URL https://demo.echolabx.com/ again by click refresh. You'll see the response has been changed.
+
+> **Content-Type**: application/json; charset=UTF-8  
+> **Content Body**:
+```json
+{ "msg": "success" }
+```
+
+:::note
+Please make sure **demo.echolabx.com** is **[Unlocked by Domain](/device/macos#unlock-https)**
+:::
