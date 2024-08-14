@@ -16,17 +16,44 @@ export default defineConfig({
       //   baseUrl: 'https://github.com/echolabx/echoproxy/tree/main/docs',
       // },
 			sidebar: [
-				{
-					label: 'Guides',
+        {
+					label: 'Start Here',
 					items: [
 						// Each item here is one entry in the navigation menu.
-						{ label: 'Example Guide', link: '/guides/example/' },
+						{ label: 'Getting Started', link: '/start/' },
 					],
 				},
 				{
-					label: 'Reference',
-					autogenerate: { directory: 'reference' },
+					label: 'Debug on Devices',
+					items: [
+						{ label: 'macOS', link: '/device/macos' },
+            { label: 'Windows', link: '/device/windows' },
+            { label: 'iOS', link: '/device/ios' },
+            { label: 'Android', link: '/device/android' },
+					],
 				},
+        {
+					label: 'Map Mock',
+					items: [
+						{ label: 'Map Request', link: '/mapmock/map' },
+					],
+				},
+        {
+					label: 'Send Request',
+					items: [
+						{ label: 'Send', link: '/send/' },
+					],
+				},
+        {
+					label: 'EchoScript',
+					items: [
+						{ label: 'EchoScript', link: '/echoscript/' },
+					],
+				},
+				// {
+				// 	label: 'Reference',
+				// 	autogenerate: { directory: 'reference' },
+				// },
 			],
       customCss: [
         './src/styles/custom.css',
