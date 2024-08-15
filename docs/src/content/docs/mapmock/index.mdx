@@ -21,17 +21,19 @@ Please make sure **Enable Map Mock** is checked ✅
 <Image src={mapImage} style="border-radius:6px;" alt="Map Mock" />
 
 ## Map Rule
-The first step is to click the **Add** button creating a new **Map Rule**. There are two types of Map Rule.
+The first step is creating a new **Map Rule** by clicking the **+Add** button . There are two types of Map Rule:
 > **Map Locale**: Map the HTTP(s) request to a local file, where the reponse Header & Body will be parsed from.  
 > **Map Remote**: Map the HTTP(s) request to a new URL, where the reponse Header & Body will be fetched from.
 
 <Image src={mapRuleImage} style="border-radius:6px; max-width: 35rem;" alt="Map Rule" />
 
 ### 1. Map Locale
-Let's take an example to learn Map Local. The example URL is https://demo.echolabx.com/.
-It's default response is:  
+Let's take an example to learn Map Local. The example URL is https://demo.echolabx.com/. It's default response:  
 > **Content-Type**: text/plain; charset=utf-8  
-> **Content Body**: Hi: EchoProxy
+> **Content Body**:
+```
+Hi: EchoProxy
+```
 
 Create a Map Rule with following settings:
 > MapLocale, GET, Equals, Enabled ✅  
@@ -42,7 +44,9 @@ Set the content of **Response(Header+Body)** as following:
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=UTF-8
 
-{ "msg": "success" }
+{
+  "msg": "success"
+}
 ```
 
 Visit the URL https://demo.echolabx.com/ again by click refresh. You'll see the response has been changed.
@@ -50,7 +54,9 @@ Visit the URL https://demo.echolabx.com/ again by click refresh. You'll see the 
 > **Content-Type**: application/json; charset=UTF-8  
 > **Content Body**:
 ```json
-{ "msg": "success" }
+{
+  "msg": "success"
+}
 ```
 
 :::note

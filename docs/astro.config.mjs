@@ -24,7 +24,7 @@ export default defineConfig({
             // Each item here is one entry in the navigation menu.
             {
               label: "Getting Started",
-              link: "/start/",
+              link: "/start",
             },
           ],
         },
@@ -54,7 +54,7 @@ export default defineConfig({
           items: [
             {
               label: "Map Mock",
-              link: "/mapmock/map",
+              link: "/mapmock",
             },
           ],
         },
