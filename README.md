@@ -9,8 +9,8 @@ It helps developers to capture, debug, and modify HTTP(s) request/response flowi
 * 🚀 Powered by **Golang** for high-performance network application.
 * 🪶 Lightweight, with **low** resource consumption, the installation file size is only **8MB**. 
 * ⭐️ Hassle-free capture HTTP(s) requests/response from Web Browsers, iOS, and Android devices.
-* 🚀 Map Mock is the first-class feature, easy to learn and use, helps you map/mock REST API request/response elegantly.
-* 😀 Write EchoScript extensions in **any** programming language, such as JavaScript, Python, Java, Go, etc.
+* 🔥 Map Mock is the first-class feature, easy to learn and use, helps you map/mock REST API request/response elegantly.
+* 😀 Write Map Mock EchoScript extensions in **any** programming language, such as JavaScript, Python, Java, Go, etc.
 * ✅ Fully supports HTTP2.
 * ✅ Modern and intuitive UI.
 * ✅ MacOS 11+, Windows 10+

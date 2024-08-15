@@ -22,58 +22,35 @@ export default defineConfig({
           label: "Start Here",
           items: [
             // Each item here is one entry in the navigation menu.
-            {
-              label: "Getting Started",
-              link: "/start",
-            },
+            { label: "Getting Started", link: "/start", },
           ],
         },
         {
           label: "Debug on Devices",
           items: [
-            {
-              label: "MacOS",
-              link: "/device/macos",
-            },
-            {
-              label: "Windows",
-              link: "/device/windows",
-            },
-            {
-              label: "iOS",
-              link: "/device/ios",
-            },
-            {
-              label: "Android",
-              link: "/device/android",
-            },
+            { label: "MacOS", link: "/device/macos", },
+            { label: "Windows", link: "/device/windows", },
+            { label: "iOS", link: "/device/ios", },
+            { label: "Android", link: "/device/android", },
           ],
         },
         {
           label: "Map Mock",
           items: [
-            {
-              label: "Map Mock",
-              link: "/mapmock",
-            },
+            { label: "Map Mock", link: "/mapmock", },
+            { label: "EchoScript", link: "/mapmock/echoscript", },
           ],
         },
         {
-          label: "Send Request",
+          label: "EchoSend",
           items: [
-            {
-              label: "Send",
-              link: "/send/",
-            },
+            { label: "EchoSend", link: "/echosend", },
           ],
         },
         {
-          label: "EchoScript",
+          label: "Deep in EchoScript",
           items: [
-            {
-              label: "EchoScript",
-              link: "/echoscript/",
-            },
+            { label: "Language", link: "/echoscript", },
           ],
         },
         // {

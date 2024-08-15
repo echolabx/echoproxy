@@ -1,0 +1,42 @@
+---
+title: EchoScript
+description: Learning EchoScript to modify HTTP(s) request/response
+---
+
+import { Image } from 'astro:assets';
+import MaterialSymbolsMapOutline from '~icons/material-symbols/map-outline';
+import { inlineIcon } from "../../../styles/styles.ts"
+import mapImage from '../../../assets/2.png';
+import mapRuleImage from '../../../assets/map-rule.png';
+
+**Map Mock** is the first-class feature of EchoProxy. It is designed with love, very easy to learn and use.
+It helps you to map & mock HTTP(s) request/response elegantly.
+
+> **Entrance**: Click **left sidebar** button <MaterialSymbolsMapOutline style={inlineIcon} />  
+
+:::note
+Please make sure **Enable Map Mock** is checked ✅
+:::
+
+<Image src={mapImage} style="border-radius:6px;" alt="Map Mock" />
+
+## Map Rule
+The first step is creating a new **Map Rule** by clicking the **+Add** button. There are two Map **Rule Types**:
+> **Map Local**: Map HTTP(s) request to a local file, where the response Header & Body will be parsed from.  
+> **Map Remote**: Map HTTP(s) request to a new URL, where the response Header & Body will be fetched from.
+
+<Image src={mapRuleImage} style="border-radius:6px; max-width: 35rem;" alt="Map Rule" />
+
+**Method**:
+> **GET/POST...**: Rule matches when request method is exactly the same.  
+> **ANY**: Rule matches for any request method.
+
+**Match Type**
+> **Equals**: Rule matches when request URL is exactly the same.  
+> **Wildcard**: Rule matches when request URL **Wildcard** matched.  
+> **Regex**: Rule matches when request URL **Regex** matched.
+
+:::note
+**Wildcard**: Only supports **\***    
+**Regex**: It uses [Golang Regex Syntax](https://pkg.go.dev/regexp/syntax)
+:::

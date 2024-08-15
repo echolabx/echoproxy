@@ -1,6 +1,6 @@
 ---
 title: Map Mock
-description: Learning Map Mock to modify HTTP(s) request/reponse
+description: Learning Map Mock to modify HTTP(s) request/response
 ---
 
 import { Image } from 'astro:assets';
@@ -8,11 +8,14 @@ import MaterialSymbolsMapOutline from '~icons/material-symbols/map-outline';
 import { inlineIcon } from "../../../styles/styles.ts"
 import mapImage from '../../../assets/2.png';
 import mapRuleImage from '../../../assets/map-rule.png';
+import mapLocalImage from '../../../assets/map-local.png';
+import mapRemoteImage1 from '../../../assets/map-remote-1.png';
+import mapRemoteImage2 from '../../../assets/map-remote-2.png';
 
 **Map Mock** is the first-class feature of EchoProxy. It is designed with love, very easy to learn and use.
 It helps you to map & mock HTTP(s) request/response elegantly.
 
-> Entrance: Click **left sidebar** button <MaterialSymbolsMapOutline style={inlineIcon} />  
+> **Entrance**: Click **left sidebar** button <MaterialSymbolsMapOutline style={inlineIcon} />  
 
 :::note
 Please make sure **Enable Map Mock** is checked ✅
@@ -21,14 +24,31 @@ Please make sure **Enable Map Mock** is checked ✅
 <Image src={mapImage} style="border-radius:6px;" alt="Map Mock" />
 
 ## Map Rule
-The first step is creating a new **Map Rule** by clicking the **+Add** button . There are two types of Map Rule:
-> **Map Locale**: Map the HTTP(s) request to a local file, where the reponse Header & Body will be parsed from.  
-> **Map Remote**: Map the HTTP(s) request to a new URL, where the reponse Header & Body will be fetched from.
+The first step is creating a new **Map Rule** by clicking the **+Add** button. There are two Map **Rule Types**:
+> **Map Local**: Map HTTP(s) request to a local file, where the response Header & Body will be parsed from.  
+> **Map Remote**: Map HTTP(s) request to a new URL, where the response Header & Body will be fetched from.
 
 <Image src={mapRuleImage} style="border-radius:6px; max-width: 35rem;" alt="Map Rule" />
 
-### 1. Map Locale
-Let's take an example to learn Map Local. The example URL is https://demo.echolabx.com/. It's default response:  
+**Method**:
+> **GET/POST...**: Rule matches when request method is exactly the same.  
+> **ANY**: Rule matches for any request method.
+
+**Match Type**
+> **Equals**: Rule matches when request URL is exactly the same.  
+> **Wildcard**: Rule matches when request URL **Wildcard** matched.  
+> **Regex**: Rule matches when request URL **Regex** matched.
+
+:::note
+**Wildcard**: Only supports **\***    
+**Regex**: It uses [Golang Regex Syntax](https://pkg.go.dev/regexp/syntax)
+:::
+
+## Map Local
+Map HTTP(s) request to a local file, where the response Header & Body will be parsed from.
+It won't send HTTP(s) request to the original URL.
+
+Let's take an example to learn Map Local. Example URL https://demo.echolabx.com/. It's default response:  
 > **Content-Type**: text/plain; charset=utf-8  
 > **Content Body**:
 ```
@@ -36,7 +56,7 @@ Hi: EchoProxy
 ```
 
 Create a Map Rule with following settings:
-> MapLocale, GET, Equals, Enabled ✅  
+> **MapLocal**, GET, Equals, Enabled ✅  
 > URL: https://demo.echolabx.com/
 
 Set the content of **Response(Header+Body)** as following:
@@ -49,8 +69,17 @@ Content-Type: application/json; charset=UTF-8
 }
 ```
 
-Visit the URL https://demo.echolabx.com/ again by click refresh. You'll see the response has been changed.
+:::note
+**Response(Header+Body)** file format:
+* the first part is **Header**: the first line is HTTP proto and statusCode, and the following lines are Header key/value pairs.
+* following with an empty new line as the **seperator** between Header and Body
+* the second part is **Body**: it can be any text as you expected
+:::
 
+<Image src={mapLocalImage} style="border-radius:3px;" alt="Map Local" />
+
+Visit the URL https://demo.echolabx.com/ **again with refresh**. You'll see the response has been changed by Map Mock.
+New response is:
 > **Content-Type**: application/json; charset=UTF-8  
 > **Content Body**:
 ```json
@@ -60,5 +89,68 @@ Visit the URL https://demo.echolabx.com/ again by click refresh. You'll see the 
 ```
 
 :::note
-Please make sure **demo.echolabx.com** is **[Unlocked by Domain](/device/macos#unlock-https)**
+**Prerequisite**: Please make sure **demo.echolabx.com** has been **[Unlocked by Domain](/device/macos#unlock-https)**
 :::
+
+## Map Remote
+Map HTTP(s) request to a new URL, where the response Header & Body will be fetched from.
+It will send HTTP(s) requests to the new URL when set.
+
+Let’s take an example. We want to map URL-1 to URL-2:
+> **URL-1**: https://demo.echolabx.com/json  
+> **URL-2**: https://demo.echolabx.com/json-v2
+
+Create a Map Rule with following settings:
+> **MapRemote**, GET, Equals, Enabled ✅  
+> URL: https://demo.echolabx.com/json
+
+Set **EchoScript** with the following content:
+```go
+on_request := func(env, req) {
+  return {
+    url: "https://demo.echolabx.com/json-v2"
+  }
+}
+```
+
+<Image src={mapRemoteImage1} style="border-radius:3px;" alt="Map Local" />
+
+Visit the URL https://demo.echolabx.com/json **again with refresh**. You'll see the response is the exactly same with URL-2.
+
+:::note
+Let's refine this example to make it more flexible and adaptable to various situations.
+We want to use one rule to handle all these senarios:  
+**Rule1**:  
+https://demo.echolabx.com/json?page=1 → https://demo.echolabx.com/json-v2?page=1  
+**Rule2**:  
+https://demo.echolabx.com/json?age=30 → https://demo.echolabx.com/json-v2?age=30
+:::
+
+Update the Map Rule with following settings:
+> **MapRemote**, GET, **Wildcard**, Enabled ✅  
+> URL: https://demo.echolabx.com/json*
+
+Set **EchoScript** with the following content:
+```go
+on_request := func(env, req) {
+  return {
+    url: "https://demo.echolabx.com/json-v2" + req.u[1]
+  }
+}
+```
+
+:::note
+Match type is set to **Wildcard**, and add **\*** at the end of Rule URL.  
+In EchoScript, **req.u[1]** gets the first matched substring of **Wildcard \***.
+When multiple **\*** in Rule URL, the matched substrings are in **req.u[1]**, **req.u[2]**, **req.u[3]**, etc.  
+**req.u** is an array holds Wildcard match results. **req.u[0]** is the original full URL.
+:::
+
+<Image src={mapRemoteImage2} style="border-radius:3px;" alt="Map Local" />
+
+Visit the following URLs **again with refresh**.  
+You'll see responses are changed to URL **json-v2**.
+* https://demo.echolabx.com/json
+* https://demo.echolabx.com/json?page=1
+* https://demo.echolabx.com/json?age=30
+
