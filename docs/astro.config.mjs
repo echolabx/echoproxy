@@ -37,14 +37,14 @@ export default defineConfig({
         {
           label: "Map Mock",
           items: [
-            { label: "Map Mock", link: "/mapmock", },
+            { label: "Overview", link: "/mapmock", },
             { label: "EchoScript", link: "/mapmock/echoscript", },
           ],
         },
         {
           label: "EchoSend",
           items: [
-            { label: "EchoSend", link: "/echosend", },
+            { label: "Overview", link: "/echosend", },
           ],
         },
         {

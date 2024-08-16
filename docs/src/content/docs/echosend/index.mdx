@@ -4,9 +4,21 @@ description: Learning EchoSend
 ---
 
 import { Image } from 'astro:assets';
+import TablerSend from '~icons/tabler/send';
+import { inlineIcon } from "../../../styles/styles.ts"
 import sendImage from '../../../assets/3.png';
+import reSendImage from '../../../assets/send-resend.png';
 
-**EchoProxy** is a modern API debugging proxy that offers powerful mapping and mocking capabilities. 
-It helps developers to capture, debug, and modify HTTP(s) request/response flowing between clients and servers.
+**EchoSend** is an API testing tool. It is similar to Postman.
+EchoSend is seamlessly integrated into EchoProxy, and brings much more convenience for users when resending requests.
+
+> **Entrance**: Click **left sidebar** button <TablerSend style={inlineIcon} />  
 
 <Image src={sendImage} style="border-radius:6px;" alt="EchoSend" />
+
+## Resend
+You can resend any captured request by right click on the record,
+and click **Send Request** <TablerSend style={inlineIcon} />.
+All HTTP request info will be automatically filled in EchoSend fields.
+
+<Image src={reSendImage} style="border-radius:3px;" alt="EchoSend" />

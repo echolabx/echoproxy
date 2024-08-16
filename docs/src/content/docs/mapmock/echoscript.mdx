@@ -1,42 +1,86 @@
 ---
-title: EchoScript
+title: EchoScript for Map Mock
 description: Learning EchoScript to modify HTTP(s) request/response
 ---
 
 import { Image } from 'astro:assets';
 import MaterialSymbolsMapOutline from '~icons/material-symbols/map-outline';
 import { inlineIcon } from "../../../styles/styles.ts"
-import mapImage from '../../../assets/2.png';
-import mapRuleImage from '../../../assets/map-rule.png';
+import echoScriptImage from '../../../assets/map-echoscript.png';
 
-**Map Mock** is the first-class feature of EchoProxy. It is designed with love, very easy to learn and use.
-It helps you to map & mock HTTP(s) request/response elegantly.
 
-> **Entrance**: Click **left sidebar** button <MaterialSymbolsMapOutline style={inlineIcon} />  
+**EchoScript** is the core of Map Mock. It can work with both Map Local and Map Remote.
 
-:::note
-Please make sure **Enable Map Mock** is checked ✅
-:::
+<Image src={echoScriptImage} style="border-radius:3px;" alt="EchoScript" />
 
-<Image src={mapImage} style="border-radius:6px;" alt="Map Mock" />
+By default, EchoScript code is commented out, which means it does nothing.
+```go
+// on_request := func(env, req) {
+//   return {}
+// }
 
-## Map Rule
-The first step is creating a new **Map Rule** by clicking the **+Add** button. There are two Map **Rule Types**:
-> **Map Local**: Map HTTP(s) request to a local file, where the response Header & Body will be parsed from.  
-> **Map Remote**: Map HTTP(s) request to a new URL, where the response Header & Body will be fetched from.
+// on_response := func(env, res) {
+//   return {}
+// }
+```
 
-<Image src={mapRuleImage} style="border-radius:6px; max-width: 35rem;" alt="Map Rule" />
+## Callback functions
+EchoScript has two standard callback functions: on_request and on_response,
+which can be used to modify HTTP(s) request and response respectively.
 
-**Method**:
-> **GET/POST...**: Rule matches when request method is exactly the same.  
-> **ANY**: Rule matches for any request method.
+### on_request
+The return value of **on_request** is a **map**, which tells EchoProxy how to modify HTTP(s) request.
+Return an empty map **\{\}** means it does nothing.
 
-**Match Type**
-> **Equals**: Rule matches when request URL is exactly the same.  
-> **Wildcard**: Rule matches when request URL **Wildcard** matched.  
-> **Regex**: Rule matches when request URL **Regex** matched.
+```go
+on_request := func(env, req) {
+  return {}
+}
+```
 
-:::note
-**Wildcard**: Only supports **\***    
-**Regex**: It uses [Golang Regex Syntax](https://pkg.go.dev/regexp/syntax)
-:::
+The structure of on_request **return** value. All fields are optional.
+```json
+{
+  // change request method, value can be GET/POST/PUT ...
+  method: string,
+  // change request URL
+  url: string,
+  // change request URL query parameters, merge original map
+  query: map,
+  // change request header key/value pairs, merge original map
+  header: map,
+  // change request cookie key/value pairs, merge original map
+  cookie: map,
+  // change request body, which can be a map or string
+  body: map | string
+}
+```
+
+### on_response
+The return value of **on_response** is a **map**, which tells EchoProxy how to modify HTTP(s) response.
+Return an empty map **\{\}** means it does nothing.
+
+```go
+on_response := func(env, res) {
+  return {}
+}
+```
+
+The structure of on_response **return** value. All fields are optional.
+```json
+{
+  // change response HTTP status code, value can be 200/302/404 ...
+  code: int,
+  // change response header key/value pairs, merge original map
+  header: map,
+  // change response cookie key/value pairs, merge original map
+  cookie: map,
+  // change response body, which can be a map or string
+  body: map | string
+}
+```
+
+## Function arguments
+### req
+### res
+### env

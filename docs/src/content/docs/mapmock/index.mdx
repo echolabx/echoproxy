@@ -1,6 +1,6 @@
 ---
 title: Map Mock
-description: Learning Map Mock to modify HTTP(s) request/response
+description: Learning Map Mock to map/mock HTTP(s) request/response
 ---
 
 import { Image } from 'astro:assets';
@@ -12,8 +12,8 @@ import mapLocalImage from '../../../assets/map-local.png';
 import mapRemoteImage1 from '../../../assets/map-remote-1.png';
 import mapRemoteImage2 from '../../../assets/map-remote-2.png';
 
-**Map Mock** is the first-class feature of EchoProxy. It is designed with love, very easy to learn and use.
-It helps you to map & mock HTTP(s) request/response elegantly.
+**Map Mock** is the first-class feature of EchoProxy. It is designed with love🔥, very easy to learn and use.
+It helps to map & mock HTTP(s) request/response elegantly.
 
 > **Entrance**: Click **left sidebar** button <MaterialSymbolsMapOutline style={inlineIcon} />  
 
@@ -28,7 +28,7 @@ The first step is creating a new **Map Rule** by clicking the **+Add** button. T
 > **Map Local**: Map HTTP(s) request to a local file, where the response Header & Body will be parsed from.  
 > **Map Remote**: Map HTTP(s) request to a new URL, where the response Header & Body will be fetched from.
 
-<Image src={mapRuleImage} style="border-radius:6px; max-width: 35rem;" alt="Map Rule" />
+<Image src={mapRuleImage} style="border-radius:6px;" alt="Map Rule" />
 
 **Method**:
 > **GET/POST...**: Rule matches when request method is exactly the same.  
@@ -36,11 +36,11 @@ The first step is creating a new **Map Rule** by clicking the **+Add** button. T
 
 **Match Type**
 > **Equals**: Rule matches when request URL is exactly the same.  
-> **Wildcard**: Rule matches when request URL **Wildcard** matched.  
-> **Regex**: Rule matches when request URL **Regex** matched.
+> **[Wildcard](#1-wildcard)**: Rule matches when request URL **Wildcard** matched.  
+> **[Regex](#2-regex)**: Rule matches when request URL **Regex** matched.
 
 :::note
-**Wildcard**: Only supports **\***    
+**Wildcard**: Only supports **asterisk \***  
 **Regex**: It uses [Golang Regex Syntax](https://pkg.go.dev/regexp/syntax)
 :::
 
@@ -57,7 +57,9 @@ Hi: EchoProxy
 
 Create a Map Rule with following settings:
 > **MapLocal**, GET, Equals, Enabled ✅  
-> URL: https://demo.echolabx.com/
+```
+URL: https://demo.echolabx.com/
+```
 
 Set the content of **Response(Header+Body)** as following:
 ```json
@@ -102,7 +104,9 @@ Let’s take an example. We want to map URL-1 to URL-2:
 
 Create a Map Rule with following settings:
 > **MapRemote**, GET, Equals, Enabled ✅  
-> URL: https://demo.echolabx.com/json
+```
+URL: https://demo.echolabx.com/json
+```
 
 Set **EchoScript** with the following content:
 ```go
@@ -128,7 +132,9 @@ https://demo.echolabx.com/json?age=30 → https://demo.echolabx.com/json-v2?age=
 
 Update the Map Rule with following settings:
 > **MapRemote**, GET, **Wildcard**, Enabled ✅  
-> URL: https://demo.echolabx.com/json*
+```
+URL: https://demo.echolabx.com/json*
+```
 
 Set **EchoScript** with the following content:
 ```go
@@ -140,10 +146,8 @@ on_request := func(env, req) {
 ```
 
 :::note
-Match type is set to **Wildcard**, and add **\*** at the end of Rule URL.  
-In EchoScript, **req.u[1]** gets the first matched substring of **Wildcard \***.
-When multiple **\*** in Rule URL, the matched substrings are in **req.u[1]**, **req.u[2]**, **req.u[3]**, etc.  
-**req.u** is an array holds Wildcard match results. **req.u[0]** is the original full URL.
+Match type is changed to **Wildcard**, and **asterisk \*** is added at the end of Rule URL.  
+In EchoScript, **req.u[1]** gets the first submatch of **Wildcard \***.
 :::
 
 <Image src={mapRemoteImage2} style="border-radius:3px;" alt="Map Local" />
@@ -154,3 +158,79 @@ You'll see responses are changed to URL **json-v2**.
 * https://demo.echolabx.com/json?page=1
 * https://demo.echolabx.com/json?age=30
 
+## Match Type
+### 1. Wildcard
+Rule matches when request URL **Wildcard** matched.
+> Only supports **asterisk \***.  
+> The **question ?** mark is treated as an **ordinary** charater.
+
+:::note
+In EchoScript, **req.u[1]** holds the first submatch of **asterisk \***.
+When multiple **asterisk \*** are in Wildcard URL, the submatches are in **req.u[1]**, **req.u[2]**, **req.u[3]**, etc.  
+**req.u** is an array holds Wildcard match results. **req.u[0]** is the original full URL.
+:::
+
+#### Wildcard Example A:
+```
+Wildcard: https://demo.echolabx.com/json*
+Request URL: https://demo.echolabx.com/json?page=5
+Rule Match: YES
+req.u value: ["https://demo.echolabx.com/json?page=5", "?page=5"]
+```
+
+#### Wildcard Example B:
+```
+Wildcard: https://demo.echolabx.com/json?page=*
+Request URL: https://demo.echolabx.com/json?page=5&age=40
+Rule Match: YES
+req.u value: ["https://demo.echolabx.com/json?page=5&age=40", "5&age=40"]
+```
+
+#### Wildcard Example C:
+```
+Wildcard: https://demo.echolabx.com/json?page=*&age=*
+Request URL: https://demo.echolabx.com/json?page=5&age=40
+Rule Match: YES
+req.u value: ["https://demo.echolabx.com/json?page=5&age=40", "5", "40"]
+```
+
+#### Wildcard Example D:
+```
+Wildcard: https://demo.echolabx.com/json?page=?
+Request URL: https://demo.echolabx.com/json?page=5
+Rule Match: NO
+```
+
+### 2. Regex
+Rule matches when request URL **Regex** matched. It uses [Golang Regex Syntax](https://pkg.go.dev/regexp/syntax).
+We recommend to use Wildcard most of the time. Regex is much more complex than Wildcard.
+
+:::note
+In EchoScript, **req.u[1]** holds the first submatch of **Regex group**.
+When multiple **groupes** are in Regex URL, the submatches are in **req.u[1]**, **req.u[2]**, **req.u[3]**, etc.  
+**req.u** is an array holds Regex match results. **req.u[0]** is the original full URL.
+:::
+
+#### Regex Example A:
+```
+Regex: https://demo.echolabx.com/json(.*)
+Request URL: https://demo.echolabx.com/json?page=5
+Rule Match: YES
+req.u value: ["https://demo.echolabx.com/json?page=5", "?page=5"]
+```
+
+#### Regex Example B:
+```
+Regex: https://demo.echolabx.com/json.*
+Request URL: https://demo.echolabx.com/json?page=5
+Rule Match: YES
+req.u value: ["https://demo.echolabx.com/json?page=5"]
+```
+
+#### Regex Example C:
+```
+Regex: https://demo.echolabx.com/json\?page=([\d]+)&age=([\d]+)
+Request URL: https://demo.echolabx.com/json?page=5&age=30
+Rule Match: YES
+req.u value: ["https://demo.echolabx.com/json?page=5&age=30", "5", "30"]
+```
