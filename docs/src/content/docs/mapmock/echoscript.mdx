@@ -38,6 +38,10 @@ on_request := func(env, req) {
 }
 ```
 
+:::note
+**on_request** is called when EchoProxy receives a new HTTP(s) request from client.
+:::
+
 The structure of on_request **return** value. All fields are optional.
 ```json
 {
@@ -45,14 +49,14 @@ The structure of on_request **return** value. All fields are optional.
   method: string,
   // change request URL
   url: string,
-  // change request URL query parameters, merge original map
+  // change request URL query parameters, merge with original map
   query: map,
-  // change request header key/value pairs, merge original map
+  // change request header key/value pairs, merge with original map
   header: map,
-  // change request cookie key/value pairs, merge original map
+  // change request cookie key/value pairs, merge with original map
   cookie: map,
-  // change request body, which can be a map or string
-  body: map | string
+  // change request body: a map, string or file
+  body: map|string|file
 }
 ```
 
@@ -66,21 +70,64 @@ on_response := func(env, res) {
 }
 ```
 
+:::note
+**on_response** is called when EchoProxy has received the response of HTTP(s) remote request (MapRemote),
+or has loaded the response from local file (MapLocal).
+:::
+
 The structure of on_response **return** value. All fields are optional.
 ```json
 {
   // change response HTTP status code, value can be 200/302/404 ...
   code: int,
-  // change response header key/value pairs, merge original map
+  // change response header key/value pairs, merge with original map
   header: map,
-  // change response cookie key/value pairs, merge original map
+  // change response cookie key/value pairs, merge with original map
   cookie: map,
-  // change response body, which can be a map or string
-  body: map | string
+  // change response body: a map, string or file
+  body: map|string|file
 }
 ```
 
+### Example
+
+
 ## Function arguments
 ### req
+The argument **req** represents the incoming HTTP **request**. The structure of **req**:
+```json
+{
+  u: array,         // an array holds Wildcard or Regex match results
+  url: string,      // request URL
+  method: string,   // request method
+  query: map,       // request URL query parameters
+  header: map,      // request header key/value pairs
+  cookie: map,      // request cookie key/value pairs
+  body: map|string, // request body: a map or string
+  text: string      // request body as text string
+
+  client_ip: string,   // client IP
+  client_addr: string, // client address
+}
+```
+
 ### res
+The argument **res** represents the **response** got from remote HTTP request (MapRemote),
+or the **response** loaded from local file (MapLocal). The structure of **res**:
+```json
+{
+  code: int,        // response HTTP status code
+  header: map,      // response header key/value pairs
+  cookie: map,      // response cookie key/value pairs
+  body: map|string, // response body: a map or string
+  text: string      // response body as text string
+}
+```
+
 ### env
+TODO
+
+### Example
+
+## Argument fields
+### req.query
