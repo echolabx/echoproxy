@@ -89,20 +89,17 @@ The structure of on_response **return** value. All fields are optional.
 }
 ```
 
-### Example
-
-
 ## Function arguments
 ### req
 The argument **req** represents the incoming HTTP **request**. The structure of **req**:
 ```json
 {
-  u: array,         // an array holds Wildcard or Regex match results
+  u: array,         // holds Wildcard/Regex submatch strings
   url: string,      // request URL
   method: string,   // request method
-  query: map,       // request URL query parameters
-  header: map,      // request header key/value pairs
-  cookie: map,      // request cookie key/value pairs
+  query: map,       // request URL query parameters (string)
+  header: map,      // request header key/value pairs (string)
+  cookie: map,      // request cookie key/value pairs (string)
   body: map|string, // request body: a map or string
   text: string      // request body as text string
 
@@ -117,8 +114,8 @@ or the **response** loaded from local file (MapLocal). The structure of **res**:
 ```json
 {
   code: int,        // response HTTP status code
-  header: map,      // response header key/value pairs
-  cookie: map,      // response cookie key/value pairs
+  header: map,      // response header key/value pairs (string)
+  cookie: map,      // response cookie key/value pairs (string)
   body: map|string, // response body: a map or string
   text: string      // response body as text string
 }
@@ -127,7 +124,93 @@ or the **response** loaded from local file (MapLocal). The structure of **res**:
 ### env
 TODO
 
-### Example
+## Basic Examples
+### method
+**Example**: change request method to `POST`
+```go
+on_request := func(env, req) {
+  return {
+    method: "POST"
+  }
+}
+```
 
-## Argument fields
-### req.query
+### query
+**Example A**: set URL query parameter `page=2`
+```go
+on_request := func(env, req) {
+  return {
+    query: {
+      "page": 2
+    }
+  }
+}
+```
+
+**Example B**: change URL query parameter `page` to `page+3`
+```go
+on_request := func(env, req) {
+  // convert string to int
+  page := int(req.query.page)
+  // check whether page is valid int
+  if page != undefined {
+    page += 3  // increase 3
+  }
+  return {
+    query: {
+      "page": page
+    }
+  }
+}
+```
+
+### header
+**Example A**: set HTTP **request** header `User-Agent` and `Head-Example` 
+```go
+on_request := func(env, req) {
+  return {
+    header: {
+      "User-Agent": "EchoSend API Testing Client",
+      "Head-Example": req.header["Head-Example"] + " Hello World"
+    }
+  }
+}
+```
+
+**Example B**: set HTTP **response** header `Head-Example` 
+```go
+on_response := func(env, res) {
+  return {
+    "Head-Example": "Response " + res.header["Head-Example"],
+  }
+}
+```
+
+### cookie
+**Example A**: set HTTP **request** `Cookie`: `DemoID=ABCD1234; DemoKey=XYZ789`
+```go
+on_request := func(env, req) {
+  return {
+    cookie: {
+      "DemoID": "ABCD1234",
+      "DemoKey": "XYZ789"
+    }
+  }
+}
+```
+
+**Example B**: set HTTP **response** `Set-Cookie`:
+```
+Set-Cookie: DemoKey=XYZ789; Max-Age=315360000
+Set-Cookie: DemoID=ABCD1234; Max-Age=315360000; HttpOnly; Secure; SameSite=None
+```
+```go
+on_response := func(env, res) {
+  return {
+    cookie: {
+      "DemoKey": "XYZ789; Max-Age=315360000",
+      "DemoID": "ABCD1234; Max-Age=315360000; HttpOnly; Secure; SameSite=None"
+    }
+  }
+}
+```

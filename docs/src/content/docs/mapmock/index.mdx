@@ -50,16 +50,11 @@ It won't send HTTP(s) request to the original URL.
 
 Let's take an example to learn Map Local. Example URL https://demo.echolabx.com/. It's default response:  
 > **Content-Type**: text/plain; charset=utf-8  
-> **Content Body**:
-```
-Hi: EchoProxy
-```
+> **Content Body**: `Hi: EchoProxy`
 
 Create a Map Rule with following settings:
 > **MapLocal**, GET, Equals, Enabled ✅  
-```
-URL: https://demo.echolabx.com/
-```
+> **URL**: `https://demo.echolabx.com/`
 
 Set the content of **Response(Header+Body)** as following:
 ```json
@@ -104,9 +99,7 @@ Let’s take an example. We want to map URL-1 to URL-2:
 
 Create a Map Rule with following settings:
 > **MapRemote**, GET, Equals, Enabled ✅  
-```
-URL: https://demo.echolabx.com/json
-```
+> **URL**: `https://demo.echolabx.com/json`
 
 Set **EchoScript** with the following content:
 ```go
@@ -125,16 +118,14 @@ Visit the URL https://demo.echolabx.com/json **again with refresh**. You'll see 
 Let's refine this example to make it more flexible and adaptable to various situations.
 We want to use one rule to handle all these senarios:  
 **Rule1**:  
-https://demo.echolabx.com/json?page=1 → https://demo.echolabx.com/json-v2?page=1  
+`https://demo.echolabx.com/json?page=1` → `https://demo.echolabx.com/json-v2?page=1`  
 **Rule2**:  
-https://demo.echolabx.com/json?age=30 → https://demo.echolabx.com/json-v2?age=30
+`https://demo.echolabx.com/json?age=30` → `https://demo.echolabx.com/json-v2?age=30`
 :::
 
 Update the Map Rule with following settings:
 > **MapRemote**, GET, **Wildcard**, Enabled ✅  
-```
-URL: https://demo.echolabx.com/json*
-```
+> **URL**: `https://demo.echolabx.com/json*`
 
 Set **EchoScript** with the following content:
 ```go
@@ -152,8 +143,7 @@ In EchoScript, **req.u[1]** gets the first submatch of **Wildcard \***.
 
 <Image src={mapRemoteImage2} style="border-radius:3px;" alt="Map Local" />
 
-Visit the following URLs **again with refresh**.  
-You'll see responses are changed to URL **json-v2**.
+Visit the following URLs **again with refresh**. HTTP responses are changed to URL **json-v2**.
 * https://demo.echolabx.com/json
 * https://demo.echolabx.com/json?page=1
 * https://demo.echolabx.com/json?age=30
