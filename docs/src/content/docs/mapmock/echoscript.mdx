@@ -168,10 +168,12 @@ on_request := func(env, req) {
 **Example A**: set HTTP **request** header `User-Agent` and `Head-Example` 
 ```go
 on_request := func(env, req) {
+  // get value of Head-Example, if undefined returns X
+  example := string(req.header["Head-Example"], "X")
   return {
     header: {
       "User-Agent": "EchoSend API Testing Client",
-      "Head-Example": req.header["Head-Example"] + " Hello World"
+      "Head-Example": "Hello " + example
     }
   }
 }
@@ -181,7 +183,9 @@ on_request := func(env, req) {
 ```go
 on_response := func(env, res) {
   return {
-    "Head-Example": "Response " + res.header["Head-Example"],
+    header: {
+      "Head-Example": "Response " + string(res.header["Head-Example"], "Y")
+    }
   }
 }
 ```
@@ -211,6 +215,16 @@ on_response := func(env, res) {
       "DemoKey": "XYZ789; Max-Age=315360000",
       "DemoID": "ABCD1234; Max-Age=315360000; HttpOnly; Secure; SameSite=None"
     }
+  }
+}
+```
+
+### status code
+**Example**: change HTTP response status code to `400`
+```go
+on_response := func(env, res) {
+  return {
+    code: 400
   }
 }
 ```
