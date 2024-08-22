@@ -19,6 +19,21 @@ export default defineConfig({
             content: 'CLxUJgf6sEvwPIugPLy_0lfBi6kUPB1DFyCS_TRCfkw',
           },
         },
+        // google analytics
+        {
+          tag: 'script',
+          attrs: {
+            async: true,
+            src: 'https://www.googletagmanager.com/gtag/js?id=G-ZJY6EE5V5M',
+          },
+        },
+        {
+          tag: 'script',
+          content: "window.dataLayer = window.dataLayer || [];\n" +
+          "function gtag(){dataLayer.push(arguments);}\n" +
+          "gtag('js', new Date());\n"+
+          "gtag('config', 'G-ZJY6EE5V5M');"
+        },
       ],
       social: {
         github: "https://github.com/echolabx/echoproxy",
