@@ -11,6 +11,15 @@ export default defineConfig({
       logo: {
         src: "./src/assets/favicon.svg",
       },
+      head: [
+        {
+          tag: 'meta',
+          attrs: {
+            name: 'google-site-verification',
+            content: 'CLxUJgf6sEvwPIugPLy_0lfBi6kUPB1DFyCS_TRCfkw',
+          },
+        },
+      ],
       social: {
         github: "https://github.com/echolabx/echoproxy",
       },
