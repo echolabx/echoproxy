@@ -1,0 +1,342 @@
+---
+title: EchoScript Examples
+description: Learning EchoScript with Examples
+---
+
+import { Image } from 'astro:assets';
+import TablerSend from '~icons/tabler/send';
+import { inlineIcon } from "../../../styles/styles.ts"
+import mapBodyImage1 from '../../../assets/map-body-1.png';
+import mapBodyImage2 from '../../../assets/map-body-2.png';
+
+Let's embark on a journey to master EchoScript through illustrative examples.
+
+## Basic Examples
+### method
+**Example**: change request method to `POST`
+```go
+on_request := func(env, req) {
+  return {
+    method: "POST"
+  }
+}
+```
+
+### query
+**Example A**: set URL query parameter `page=2`
+```go
+on_request := func(env, req) {
+  return {
+    query: {
+      "page": 2
+    }
+  }
+}
+```
+
+**Example B**: change URL query parameter `page` to `page+3`
+```go
+on_request := func(env, req) {
+  // convert string to int, if undefined returns 0
+  page := int(req.query.page, 0)
+  return {
+    query: {
+      "page": page+3
+    }
+  }
+}
+```
+
+### header
+**Example A**: set HTTP **request** header `User-Agent` and `Head-Example` 
+```go
+on_request := func(env, req) {
+  // get value of Head-Example, if undefined returns X
+  example := string(req.header["Head-Example"], "X")
+  return {
+    header: {
+      "User-Agent": "EchoSend API Testing Client",
+      "Head-Example": "Hello " + example
+    }
+  }
+}
+```
+
+**Example B**: set HTTP **response** header `Head-Example` 
+```go
+on_response := func(env, res) {
+  return {
+    header: {
+      "Head-Example": "Response " + string(res.header["Head-Example"], "Y")
+    }
+  }
+}
+```
+
+### cookie
+**Example A**: set HTTP **request** `Cookie`: `DemoID=ABCD1234; DemoKey=XYZ789`
+```go
+on_request := func(env, req) {
+  return {
+    cookie: {
+      "DemoID": "ABCD1234",
+      "DemoKey": "XYZ789"
+    }
+  }
+}
+```
+
+**Example B**: set HTTP **response** `Set-Cookie`:
+```
+Set-Cookie: DemoKey=XYZ789; Max-Age=315360000
+Set-Cookie: DemoID=ABCD1234; Max-Age=315360000; HttpOnly; Secure; SameSite=None
+```
+```go
+on_response := func(env, res) {
+  return {
+    cookie: {
+      "DemoKey": "XYZ789; Max-Age=315360000",
+      "DemoID": "ABCD1234; Max-Age=315360000; HttpOnly; Secure; SameSite=None"
+    }
+  }
+}
+```
+
+### status code
+**Example**: change HTTP response status code to `404`
+```go
+on_response := func(env, res) {
+  return {
+    code: 404,
+    body: "404 page not found" // change body text, optional
+  }
+}
+```
+
+### redirect
+**Example**: redirect to `https://demo.echolabx.com/example` with
+`status code` [302](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/302),
+which indicates that the resource requested has been temporarily moved to the URL given by the **Location** header.
+```go
+on_response := func(env, res) {
+  return {
+    code: 302,
+    header: {
+      Location: "https://demo.echolabx.com/example"
+    },
+    body: "" // reset to empty string, optional
+  }
+}
+```
+
+## Body Examples
+The **`returned body`** field of functions on_request and on_response has the same structure.
+```json
+{
+  // change body: a string, file, or map
+  body: string|file|map
+}
+```
+
+:::note
+EchoProxy uses the **`returned body`** and `Content-Type header` to encode the **final** body content.
+:::
+
+### body: string
+When **`returned body`** is a `string`, the **final** body content is the same with this string.
+It’s **your** responsibility to make sure the body string format is suitable for the `Content-Type header`.
+```go
+on_response := func(env, res) {
+  return {
+    body: "Hello, New body string!"
+  }
+}
+```
+
+:::note
+body type **string** is mostly used when **Content-Type** is `text/plain`, `text/html`, `text/css`, `text/javascript`, etc.
+:::
+
+**Example**: Modify response body text by inserting a message before `EchoProxy`.  
+Create a Map Rule with following settings:
+> **MapRemote**, **GET**, Equals, Enabled ✅  
+> **URL**: `https://demo.echolabx.com/`  
+> **Default body content**: `Hi: EchoProxy`
+```go
+text := import("text")
+on_response := func(env, res) {
+  // returns the index of substr in s, or -1 if not present
+  n := text.index(res.text, "EchoProxy")
+  if n >= 0 {
+    return {
+      body: res.text[0:n] + "powerful " + res.text[n:]
+    }
+  }
+  return {}
+}
+```
+
+Visit URL https://demo.echolabx.com/ again, the output is following:
+```
+Hi: powerful EchoProxy
+```
+
+### body: file
+When **`returned body`** is a `file`, EchoScript will load the file content as a text string,
+and the **final** body content is the same with the `file` content.
+
+**Example A**: Load file content to response body.
+Create a Map Rule with following settings:
+> **MapRemote**, **GET**, Equals, Enabled ✅  
+> **URL**: `https://demo.echolabx.com/`  
+> **Default body content**: `Hi: EchoProxy`
+```go
+on_response := func(env, res) {
+  return {
+    body: file("~/workspace/input.txt")
+  }
+}
+```
+Create a new file at location `~/workspace/input.txt` with following content:
+```
+EchoProxy: Modern API debugging Proxy with powerful Map Mock
+```
+
+Visit URL https://demo.echolabx.com/ again, the output will be the same with the above file.
+
+:::note
+**`file`** is an EchoScript function to create a file object with **name** specified.
+:::
+
+**Example B**: Load file content to response body as an **`attachment`**.
+Update the Map Rule in Exampe A with only EchoScript changed:
+```go
+on_response := func(env, res) {
+  return {
+    body: attachment("~/workspace/input.txt")
+  }
+}
+```
+
+Visit URL https://demo.echolabx.com/ again, the web browser will trigger file downloading with name `input.txt`.
+
+:::note
+**`attachment`** is an EchoScript function to create a file object with **name** specified,  
+and it also sets header `Content-Disposition: attachment; filename=name` .
+:::
+
+The above script is equivalent to the following code.
+```go
+on_response := func(env, res) {
+  return {
+    body: file("~/workspace/input.txt"),
+    header: {
+      "Content-Disposition": "attachment; filename=input.txt"
+    }
+  }
+}
+```
+
+### body: map
+The **`req.body`** and **`res.body`** arguments are automatically parsed as **`map`** when `Content-Type` is in the following list.
+Accordingly, the **`returned body`** should be a **`map`** as well.
+* `application/json`
+* `application/x-www-form-urlencoded`
+* `multipart/form-data`
+
+:::note
+You can always get the original **body string** by **`req.text`** and **`res.text`**.
+:::
+
+When the **`returned body`** is a **`map`**, the **final** body content is encoded in **`json`** format by defualt.
+The relationship between `Content-Type` and final body content **encoding format**:
+| Content-Type                        | Final body encoding Format |
+| ----------------------------------- | -------------------------- |
+| `application/json`                  | **`json`**                 |
+| `application/x-www-form-urlencoded` | **`urlencoded`**           |
+| `multipart/form-data`               | **`form-data`**            |
+| `other`                             | **`json`**                 |
+
+## Body map Examples
+### application/json
+**Example**: Merge response body with `Content-Type: application/json`.
+Create a Map Rule with following settings:
+> **MapRemote**, GET, Equals, Enabled ✅  
+> **URL**: `https://demo.echolabx.com/json?page=3`
+```go
+on_response := func(env, res) {
+  return {
+    body: {
+      "list": ["abc", "xyz"],
+      "name": "EchoProxy 1.0.0",
+      "query": {
+        "count": 20 * int(res.body.query.page, 1)
+      }
+    }
+  }
+}
+```
+
+Visit URL https://demo.echolabx.com/json?page=3 again, the output is following:
+```json
+{
+  "list": [ "abc", "xyz" ],
+  "method": "GET",
+  "name": "EchoProxy 1.0.0",
+  "query": {
+    "count": 60,
+    "page": "3"
+  }
+}
+```
+
+### application/x-www-form-urlencoded
+**Example**: Merge request body with `Content-Type: application/x-www-form-urlencoded`.
+Create a Map Rule with following settings:
+> **MapRemote**, **POST**, Equals, Enabled ✅  
+> **URL**: `https://demo.echolabx.com/form-post`
+```go
+on_request := func(env, req) {
+  return {
+    header: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: {
+      "app": "EchoProxy",
+      "year": 2024,
+      "list": ["abc", "xyz"]
+    }
+  }
+}
+```
+
+Send a **POST** request to `https://demo.echolabx.com/form-post` with **EchoSend** <TablerSend style={inlineIcon} />.  
+You can check the updated request body in tab **ReqBody**.
+<Image src={mapBodyImage1} style="border-radius:3px;" alt="Map Request Body" />
+
+```
+app=EchoProxy&list=abc&list=xyz&year=2024
+```
+
+### multipart/form-data
+**Example**: Merge request body with `Content-Type: multipart/form-data`.
+Create a Map Rule with following settings:
+> **MapRemote**, **POST**, Equals, Enabled ✅  
+> **URL**: `https://demo.echolabx.com/upload-post`
+```go
+on_request := func(env, req) {
+  return {
+    header: {
+      "Content-Type": "multipart/form-data"
+    },
+    body: {
+      "app": "EchoProxy",
+      "upload": file("~/workspace/input.txt")
+    }
+  }
+}
+```
+
+Send a **POST** request to `https://demo.echolabx.com/upload-post` with **EchoSend** <TablerSend style={inlineIcon} />.  
+You can check the updated request body in tab **ReqBody**.
+<Image src={mapBodyImage2} style="border-radius:3px;" alt="Map Request Body" />

@@ -7,7 +7,7 @@ import { Image } from 'astro:assets';
 import MaterialSymbolsMapOutline from '~icons/material-symbols/map-outline';
 import { inlineIcon } from "../../../styles/styles.ts"
 import echoScriptImage from '../../../assets/map-echoscript.png';
-
+import logEnvImage from '../../../assets/map-log-env.png';
 
 **EchoScript** is the core of Map Mock. It can work with both Map Local and Map Remote.
 
@@ -29,8 +29,8 @@ EchoScript has two standard callback functions: on_request and on_response,
 which can be used to modify HTTP(s) request and response respectively.
 
 ### on_request
-The return value of **on_request** is a **map**, which tells EchoProxy how to modify HTTP(s) request.
-Return an empty map **\{\}** means it does nothing.
+The return value of **`on_request`** is a **`map`**, which tells EchoProxy how to modify HTTP(s) request.
+Return an empty map **`{}`** means it does nothing.
 
 ```go
 on_request := func(env, req) {
@@ -39,10 +39,10 @@ on_request := func(env, req) {
 ```
 
 :::note
-**on_request** is called when EchoProxy receives a new HTTP(s) request from client.
+**`on_request`** is called when EchoProxy receives a new HTTP(s) request from client.
 :::
 
-The structure of on_request **return** value. All fields are optional.
+The structure of on_request **`return`** value. All fields are optional.
 ```json
 {
   // change request method, value can be GET/POST/PUT ...
@@ -55,14 +55,14 @@ The structure of on_request **return** value. All fields are optional.
   header: map,
   // change request cookie key/value pairs, merge with original map
   cookie: map,
-  // change request body: a map, string or file
-  body: map|string|file
+  // change request body: a string, file, or map
+  body: string|file|map
 }
 ```
 
 ### on_response
-The return value of **on_response** is a **map**, which tells EchoProxy how to modify HTTP(s) response.
-Return an empty map **\{\}** means it does nothing.
+The return value of **`on_response`** is a **`map`**, which tells EchoProxy how to modify HTTP(s) response.
+Return an empty map **`{}`** means it does nothing.
 
 ```go
 on_response := func(env, res) {
@@ -71,11 +71,11 @@ on_response := func(env, res) {
 ```
 
 :::note
-**on_response** is called when EchoProxy has received the response of HTTP(s) remote request (MapRemote),
+**`on_response`** is called when EchoProxy has received the response of HTTP(s) remote request (MapRemote),
 or has loaded the response from local file (MapLocal).
 :::
 
-The structure of on_response **return** value. All fields are optional.
+The structure of on_response **`return`** value. All fields are optional.
 ```json
 {
   // change response HTTP status code, value can be 200/302/404 ...
@@ -84,14 +84,14 @@ The structure of on_response **return** value. All fields are optional.
   header: map,
   // change response cookie key/value pairs, merge with original map
   cookie: map,
-  // change response body: a map, string or file
-  body: map|string|file
+  // change response body: a string, file, or map
+  body: string|file|map
 }
 ```
 
 ## Function arguments
 ### req
-The argument **req** represents the incoming HTTP **request**. The structure of **req**:
+The argument **`req`** represents the incoming HTTP **request**. The structure of **`req`**:
 ```json
 {
   u: array,         // holds Wildcard/Regex submatch strings
@@ -100,7 +100,7 @@ The argument **req** represents the incoming HTTP **request**. The structure of 
   query: map,       // request URL query parameters (string)
   header: map,      // request header key/value pairs (string)
   cookie: map,      // request cookie key/value pairs (string)
-  body: map|string, // request body: a map or string
+  body: string|map, // request body: a string or map
   text: string      // request body as text string
 
   client_ip: string,   // client IP
@@ -108,123 +108,46 @@ The argument **req** represents the incoming HTTP **request**. The structure of 
 }
 ```
 
+:::note
+Don't update the value of **`req`**. The updated value will be **discarded**.
+:::
+
 ### res
-The argument **res** represents the **response** got from remote HTTP request (MapRemote),
-or the **response** loaded from local file (MapLocal). The structure of **res**:
+The argument **`res`** represents the **response** got from remote HTTP request (MapRemote),
+or the **response** loaded from local file (MapLocal). The structure of **`res`**:
 ```json
 {
   code: int,        // response HTTP status code
   header: map,      // response header key/value pairs (string)
   cookie: map,      // response cookie key/value pairs (string)
-  body: map|string, // response body: a map or string
+  body: string|map, // response body: a string or map
   text: string      // response body as text string
 }
 ```
 
+:::note
+Don't update the value of **`res`**. The updated value will be **discarded**.
+:::
+
 ### env
-TODO
+The argument **`env`** is a **`map`**, which is designed to get and set enviroment variables.  
+**TODO**: under development
 
-## Basic Examples
-### method
-**Example**: change request method to `POST`
+:::note
+You can **pass variables** between callback functions using **env**.
+:::
+
+**Example**: **Pass variable** `env.key1` from `on_request` to `on_response`, and `print` its value to **Log tab**.
 ```go
 on_request := func(env, req) {
-  return {
-    method: "POST"
-  }
+  env["key1"] = { "n": 99, "msg": "Hi" }
+  return {}
 }
-```
 
-### query
-**Example A**: set URL query parameter `page=2`
-```go
-on_request := func(env, req) {
-  return {
-    query: {
-      "page": 2
-    }
-  }
-}
-```
-
-**Example B**: change URL query parameter `page` to `page+3`
-```go
-on_request := func(env, req) {
-  // convert string to int
-  page := int(req.query.page)
-  // check whether page is valid int
-  if page != undefined {
-    page += 3  // increase 3
-  }
-  return {
-    query: {
-      "page": page
-    }
-  }
-}
-```
-
-### header
-**Example A**: set HTTP **request** header `User-Agent` and `Head-Example` 
-```go
-on_request := func(env, req) {
-  // get value of Head-Example, if undefined returns X
-  example := string(req.header["Head-Example"], "X")
-  return {
-    header: {
-      "User-Agent": "EchoSend API Testing Client",
-      "Head-Example": "Hello " + example
-    }
-  }
-}
-```
-
-**Example B**: set HTTP **response** header `Head-Example` 
-```go
 on_response := func(env, res) {
-  return {
-    header: {
-      "Head-Example": "Response " + string(res.header["Head-Example"], "Y")
-    }
-  }
+  print("env.key1: ", env.key1)
+  return {}
 }
 ```
 
-### cookie
-**Example A**: set HTTP **request** `Cookie`: `DemoID=ABCD1234; DemoKey=XYZ789`
-```go
-on_request := func(env, req) {
-  return {
-    cookie: {
-      "DemoID": "ABCD1234",
-      "DemoKey": "XYZ789"
-    }
-  }
-}
-```
-
-**Example B**: set HTTP **response** `Set-Cookie`:
-```
-Set-Cookie: DemoKey=XYZ789; Max-Age=315360000
-Set-Cookie: DemoID=ABCD1234; Max-Age=315360000; HttpOnly; Secure; SameSite=None
-```
-```go
-on_response := func(env, res) {
-  return {
-    cookie: {
-      "DemoKey": "XYZ789; Max-Age=315360000",
-      "DemoID": "ABCD1234; Max-Age=315360000; HttpOnly; Secure; SameSite=None"
-    }
-  }
-}
-```
-
-### status code
-**Example**: change HTTP response status code to `400`
-```go
-on_response := func(env, res) {
-  return {
-    code: 400
-  }
-}
-```
+<Image src={logEnvImage} style="border-radius:3px;" alt="Log env" />
