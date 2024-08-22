@@ -337,6 +337,34 @@ on_request := func(env, req) {
 }
 ```
 
+:::note
+You can reference the usage of `file` in [previous section](#body-file).
+:::
+
 Send a **POST** request to `https://demo.echolabx.com/upload-post` with **EchoSend** <TablerSend style={inlineIcon} />.  
 You can check the updated request body in tab **ReqBody**.
 <Image src={mapBodyImage2} style="border-radius:3px;" alt="Map Request Body" />
+
+The above script is equivalent to the following code.  
+```go
+on_request := func(env, req) {
+  return {
+    header: {
+      "Content-Type": "multipart/form-data"
+    },
+    body: {
+      "app": "EchoProxy",
+      "upload": {
+        "file": "input.txt",
+        "text": "EchoProxy: Modern API debugging Proxy with powerful Map Mock"
+      }
+    }
+  }
+}
+```
+
+:::note
+With `Content-Type: multipart/form-data`:  
+In EchoScript, fields with structure `{ "file": xx, "text": yy }` are treated as `file` object.  
+The upload file fields in `req.body` are also with structure `{ "file": xx, "text": yy }`
+:::
