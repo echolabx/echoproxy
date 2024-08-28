@@ -1,5 +1,12 @@
 # EchoProxy
 
+## 0.9.3
+* Support get FREE License.
+* Keep filters when clearing traffic history.
+* EchoScript: add exec and to_file functions.
+* EchoScript: use to_file in exec.
+* bugfix: traffic list total record number.
+
 ## 0.9.2
 * Auto-detect IP changing.
 * Save send history in user-data directory.
