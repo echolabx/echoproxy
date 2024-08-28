@@ -1,0 +1,240 @@
+---
+title: EchoScript Extension
+description: EchoScript Extensions in ANY programming language
+---
+
+import { Image } from 'astro:assets';
+import MaterialSymbolsMapOutline from '~icons/material-symbols/map-outline';
+import { inlineIcon } from "../../../styles/styles.ts"
+import pythonImage1 from '../../../assets/map-extension-python-1.png';
+import pythonImage2 from '../../../assets/map-extension-python-2.png';
+import jsImage from '../../../assets/map-extension-javascript.png';
+
+When you need to implement **complex logic**, you can write EchoScript **extensions** in **ANY** programming language,
+such as JavaScript, Python, Java, Go, etc.
+
+EchoScript uses function **`exec`** to run **extensions** in a very convenient way.
+```go
+exec(name, args...) => string/map/error
+```
+
+You can use function **`is_error`** to check whether the value is `error` or not.  
+The return value of `exec` depends on the output of the command.
+| cmd output       | cmd exit code | exec return value |
+| ---------------- | ------------- | ----------------- |
+| `json {...}`     | `0`           | map               |
+| not `json {...}` | `0`           | string            |
+| any              | `!= 0`        | error             |
+
+The **`name`** argument is the `command` in `$PATH`, or **absolute** file path to the `command`.  
+The **`args`** argument type can be `string|file|map|array`.  
+The **`map|array`** arguments are transformed to **`json file`** automatically.
+|  args argument type  | actual command argument |
+| -------------------- | ----------------------- |
+| `string`             | string                  |
+| `map`                | json file path          |
+| `array`              | json file path          |
+| `file`               | file path               |
+
+## Python
+### Example 1
+Use `python` to generate `uuid` and `base64`. Create a Map Rule with following settings:
+> **MapLocal**, GET, Equals, Enabled ✅  
+> **URL**: `https://demo.echolabx.com/`
+
+```go
+on_response := func(env, res) {
+  // cmd output is json, and exec returns a map
+  r := exec("python3", "~/gen_uuid_base64.py", "Hello, EchoProxy")
+
+  return {
+    body: {
+      "uuid": r.uuid,
+      "exec": r
+    }
+  }
+}
+```
+
+Content of python file `~/gen_uuid_base64.py`:
+```python
+import base64
+import uuid
+import json
+import sys
+
+a = "Hello World"
+if len(sys.argv) > 1:
+	a = sys.argv[1]
+
+b = base64.b64encode(str.encode(a))
+
+x = {
+  "input": a,
+  "base64": bytes.decode(b),
+  "uuid": str(uuid.uuid4()),
+}
+
+# convert x into json, print to stdout
+print(json.dumps(x))
+```
+
+Visit the URL https://demo.echolabx.com/ again, the new response body data:
+```json
+{
+  "exec": {
+    "base64": "SGVsbG8sIEVjaG9Qcm94eQ==",
+    "input": "Hello, EchoProxy",
+    "uuid": "3dcf7b92-bdb0-4363-812c-eb17bd53d94a"
+  },
+  "uuid": "3dcf7b92-bdb0-4363-812c-eb17bd53d94a"
+}
+```
+
+You can see `exec` log on **`Tab Log`**.
+<Image src={pythonImage1} style="border-radius:3px;" alt="EchoScript Log" />
+
+### Example 2
+When you want to pass more information to `exec` command, you can use `map` as argument.
+Create a Map Rule with following settings:
+> **MapLocal**, GET, Equals, Enabled ✅  
+> **URL**: `https://demo.echolabx.com/`
+```go
+on_response := func(env, res) {
+  // the last argument is a map, and exec returns a map
+  r := exec("python3", "~/use_json.py", {
+    "name": "EchoProxy",
+    "version": "1.0.0"
+  })
+
+  return {
+    body: r
+  }
+}
+```
+
+**`exec`** **automatically** transform **`map`** argument to a file with **`to_file`** function,
+the command can read the file and decode the content as **`json`**.
+```go
+{
+  "name": "EchoProxy",
+  "version": "1.0.0"
+}
+```
+
+Content of python file `~/use_json.py`. It loads the first argument as a **`json file`**.
+```python
+import json
+import sys
+
+def main():
+  # load json file argv[1]
+  a = load_json(1, {})
+
+  x = {
+    "input": a,
+    "name": a.get("name"),
+  }
+
+  # convert x into json, print to stdout
+  print(json.dumps(x))
+
+# load json file argv[index], return dict
+def load_json(index, default):
+  try:
+    file_name = sys.argv[index]
+    f = open(file_name, "r")
+    content = f.read()
+    f.close()
+    return json.loads(content)
+  except:
+    return default
+
+# run main function
+main()
+```
+
+Visit the URL again, the new response body data:
+```json
+{
+  "input": {
+    "name": "EchoProxy",
+    "version": "1.0.0"
+  },
+  "name": "EchoProxy"
+}
+```
+
+You can see `exec` log on **`Tab Log`**.
+<Image src={pythonImage2} style="border-radius:3px;" alt="EchoScript Log" />
+
+## JavaScript
+You can write extensions in `JavaScript` with `Node.js`.
+
+Create an example Map Rule with following settings:
+> **MapLocal**, GET, Equals, Enabled ✅  
+> **URL**: `https://demo.echolabx.com/`
+```go
+on_response := func(env, res) {
+  // convert map to file
+  arg_file := to_file({
+    "name": "EchoProxy",
+    "version": "1.0.0"
+  })
+  // exec returns a map
+  r := exec("node", "~/use_json.js", arg_file)
+  print("name: ", r.name)
+
+  return {
+    body: r
+  }
+}
+```
+
+:::note
+**`to_file`** function can transform **ANY** variable to file.  
+`map|array` variables will be transformed to **`json`** file.
+:::
+
+Content of JavaScript file `~/use_json.js`. It loads the second argument as a **`json file`**.
+```javascript
+const fs = require('node:fs');
+
+function main() {
+  let a = load_json(2, {})
+  let x = {
+    "input": a,
+    "name": a["name"] + " " + a["version"],
+  }
+
+  console.log(JSON.stringify(x))
+}
+
+// load json file argv[index], return object
+function load_json(index, default_val) {
+  try {
+    let file_name = process.argv[index];
+    let data = fs.readFileSync(file_name);
+    return JSON.parse(data)
+  } catch (e) {
+    return default_val
+  }
+}
+
+// run main function
+main()
+```
+
+Visit the URL again, the new response body data:
+```json
+{
+  "input": {
+    "name": "EchoProxy",
+    "version": "1.0.0"
+  },
+  "name": "EchoProxy 1.0.0"
+}
+```
+
+You can see `exec` log on **`Tab Log`**.
+<Image src={jsImage} style="border-radius:3px;" alt="EchoScript Log" />

@@ -64,6 +64,7 @@ export default defineConfig({
             { label: "Map Mock", link: "/mapmock", },
             { label: "EchoScript", link: "/mapmock/echoscript", },
             { label: "Examples", link: "/mapmock/examples", },
+            { label: "Extension", link: "/mapmock/extension", },
           ],
         },
         {

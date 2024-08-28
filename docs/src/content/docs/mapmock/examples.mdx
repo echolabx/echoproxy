@@ -259,7 +259,18 @@ The relationship between `Content-Type` and final body content **encoding format
 
 ## Body map Examples
 ### application/json
-**Example**: Merge response body with `Content-Type: application/json`.
+**Example**: Merge response body with `Content-Type: application/json`.  
+Suppose the response data is in the following format.
+We want to change the value of `name` to `EchoProxy 1.0.0`, and add fields `list` and `query.count`. 
+```json
+{
+  "method": "GET",
+  "name": "EchoProxy",
+  "query": {
+    "page": "3"
+  }
+}
+```
 Create a Map Rule with following settings:
 > **MapRemote**, GET, Equals, Enabled ✅  
 > **URL**: `https://demo.echolabx.com/json?page=3`
