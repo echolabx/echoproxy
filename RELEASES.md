@@ -1,5 +1,14 @@
 # EchoProxy
 
+## 0.9.4
+* Upgrade to wails 2.9.1
+* Support get FREE License.
+* CA files move to ca directory.
+* EchoScript: add exec and to_file functions.
+* EchoScript: use to_file in exec.
+* EchoScript: Quote command space arguments
+* bugfix: EchoScript on_response nil env.
+
 ## 0.9.3
 * Support get FREE License.
 * Keep filters when clearing traffic history.
