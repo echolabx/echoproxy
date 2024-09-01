@@ -1,5 +1,11 @@
 # EchoProxy
 
+## 0.9.5
+* EchoScript: support assign function.
+* EchoScript: add more unit test cases.
+* bug fix: hide cmd window on Windows.
+* bug fix: URL/Raw div works on Windows.
+
 ## 0.9.4
 * Upgrade to wails 2.9.1
 * Support get FREE License.

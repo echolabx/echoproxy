@@ -23,7 +23,7 @@ on_request := func(env, req) {
 ```
 
 ### query
-**Example A**: set URL query parameter `page=2`
+**Example A**: change URL query parameter `page=2`
 ```go
 on_request := func(env, req) {
   return {
@@ -48,7 +48,7 @@ on_request := func(env, req) {
 ```
 
 ### header
-**Example A**: set HTTP **request** header `User-Agent` and `Head-Example` 
+**Example A**: change HTTP **request** header `User-Agent` and `Head-Example` 
 ```go
 on_request := func(env, req) {
   // get value of Head-Example, if undefined returns X
@@ -62,7 +62,7 @@ on_request := func(env, req) {
 }
 ```
 
-**Example B**: set HTTP **response** header `Head-Example` 
+**Example B**: change HTTP **response** header `Head-Example` 
 ```go
 on_response := func(env, res) {
   return {
@@ -74,7 +74,7 @@ on_response := func(env, res) {
 ```
 
 ### cookie
-**Example A**: set HTTP **request** `Cookie`: `DemoID=ABCD1234; DemoKey=XYZ789`
+**Example A**: change HTTP **request** `Cookie`: `DemoID=ABCD1234; DemoKey=XYZ789`
 ```go
 on_request := func(env, req) {
   return {
@@ -86,7 +86,7 @@ on_request := func(env, req) {
 }
 ```
 
-**Example B**: set HTTP **response** `Set-Cookie`:
+**Example B**: change HTTP **response** `Set-Cookie`:
 ```
 Set-Cookie: DemoKey=XYZ789; Max-Age=315360000
 Set-Cookie: DemoID=ABCD1234; Max-Age=315360000; HttpOnly; Secure; SameSite=None
