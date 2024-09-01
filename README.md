@@ -58,9 +58,9 @@ on_response := func(env, res) {
 The script changes request and response is named **EchoScript**. It is easy to learn and use.
 
 ## Download 
-* Download the latest [macOS app (Apple Silicon)](https://github.com/echolabx/echoproxy/releases/download/v0.9.4/EchoProxy-0.9.4-mac-arm64.dmg)
-* Download the latest [macOS app (Intel Chip)](https://github.com/echolabx/echoproxy/releases/download/v0.9.4/EchoProxy-0.9.4-mac-amd64.dmg)
-* Download the latest [Windows app](https://github.com/echolabx/echoproxy/releases/download/v0.9.4/EchoProxy-0.9.4-windows-amd64.zip)
+* Download the latest [macOS app (Apple Silicon)](https://github.com/echolabx/echoproxy/releases/download/v0.9.5/EchoProxy-0.9.5-mac-arm64.dmg)
+* Download the latest [macOS app (Intel Chip)](https://github.com/echolabx/echoproxy/releases/download/v0.9.5/EchoProxy-0.9.5-mac-amd64.dmg)
+* Download the latest [Windows app](https://github.com/echolabx/echoproxy/releases/download/v0.9.5/EchoProxy-0.9.5-windows-amd64.zip)
 * [All Releases](https://github.com/echolabx/echoproxy/releases)
 
 ## Documentation
