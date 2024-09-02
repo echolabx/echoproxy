@@ -89,6 +89,88 @@ The structure of on_response **`return`** value. All fields are optional.
 }
 ```
 
+### Map modify strategy
+When the **`field`** type is a **`map`**, the default modify strategy is to **`merge`** the two `maps`.
+The other types (`string|int|float|file|array`) use **`assign`** strategy, which means the new value **overwrite** old value.
+| field type        | modify strategy      |
+| ----------------- | -------------------  |
+| `map`             | `merge`              |
+| `string`          | `assign` *overwrite* |
+| `int\|float`      | `assign` *overwrite* |
+| `file`            | `assign` *overwrite* |
+| `array`           | `assign` *overwrite* |
+
+#### Merge Example
+Let's take `body` field as an example. The **original** `body` value:
+```json
+{
+  body: {
+    "k1": 10,
+    "k2": "hello",
+    "k3": {
+      "page": 3
+    },
+    "k4": [1, 2]
+  }
+}
+```
+
+The **returned** `body` value:
+```json
+{
+  body: {
+    "k2": "world",
+    "k3": {
+      "total": 50
+    },
+    "k4": [5, 6, 7]
+  }
+}
+```
+
+The **final** `body` value is the **merge** result of the two `maps`:
+```json
+{
+  body: {
+    "k1": 10,
+    "k2": "world",
+    "k3": {
+      "page": 3,
+      "total": 50
+    },
+    "k4": [5, 6, 7]
+  }
+}
+```
+
+#### Assign Example
+The **original** `body` value is the same with previous example.  
+The **returned** `body` value is handled with function **`assign`**:
+```json
+{
+  body: assign({
+    "k2": "world",
+    "k3": {
+      "total": 50
+    },
+    "k4": [5, 6, 7]
+  })
+}
+```
+
+The **final** `body` value will be the same with the **`assign`** argument:
+```json
+{
+  body: {
+    "k2": "world",
+    "k3": {
+      "total": 50
+    },
+    "k4": [5, 6, 7]
+  }
+}
+```
+
 ## Function arguments
 ### req
 The argument **`req`** represents the incoming HTTP **request**. The structure of **`req`**:
@@ -109,8 +191,18 @@ The argument **`req`** represents the incoming HTTP **request**. The structure o
 ```
 
 :::note
-Don't update the value of **`req`**. The updated value will be **discarded**.
+If you modify **`req`** fields, the updated value will be **discarded** by default.
+If you **`assign`** the updated value and return, it will take effect.
 :::
+
+```go
+on_request := func(env, req) {
+  delete(req.query, "page")  // modify req.query
+  return {
+    query: assign(req.query) // return with assign
+  }
+}
+```
 
 ### res
 The argument **`res`** represents the **response** got from remote HTTP request (MapRemote),
@@ -126,8 +218,19 @@ or the **response** loaded from local file (MapLocal). The structure of **`res`*
 ```
 
 :::note
-Don't update the value of **`res`**. The updated value will be **discarded**.
+If you modify **`res`** fields, the updated value will be **discarded** by default.
+If you **`assign`** the updated value and return, it will take effect.
 :::
+
+```go
+on_response := func(env, res) {
+  delete(res.body, "name")     // modify req.body
+  res.body["msg"] = "updated!" // modify req.body
+  return {
+    body: assign(res.body)     // return with assign
+  }
+}
+```
 
 ### env
 The argument **`env`** is a **`map`**, which is designed to get and set enviroment variables.  
