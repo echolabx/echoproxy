@@ -101,8 +101,9 @@ The other types (`string|int|float|file|array`) use **`assign`** strategy, which
 | `array`           | `assign` *overwrite* |
 
 #### Merge Example
-Let's take `body` field as an example. The **original** `body` value:
+Let's take `body` field as an example. The **original** `body` value:  
 ```json
+// callback function argument: req.body or res.body
 {
   body: {
     "k1": 10,
