@@ -1,5 +1,9 @@
 # EchoProxy
 
+## 0.9.6
+* EchoScript: editor supports assign function.
+* Use Monaco Editor full version.
+
 ## 0.9.5
 * EchoScript: support assign function.
 * EchoScript: add more unit test cases.
