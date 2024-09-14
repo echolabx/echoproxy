@@ -1,5 +1,12 @@
 # EchoProxy
 
+## 0.9.7
+* Support CTRL+F shortcut.
+* Support Diff records.
+* Support Copy URL.
+* Support Copy cURL.
+* Support Save record as file.
+
 ## 0.9.6
 * EchoScript: editor supports assign function.
 * Use Monaco Editor full version.
